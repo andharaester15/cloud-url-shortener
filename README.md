@@ -75,20 +75,23 @@ Total estimasi biaya: **± $5 – $10 per bulan**
 Biaya ini dapat meningkat seiring dengan pertumbuhan jumlah pengguna dan trafik sistem, namun tetap dapat dikontrol karena menggunakan arsitektur serverless berbasis **pay-as-you-go**.
 
 ## Struktur Repository
+
+```
 cloud-url-shortener
 │
 ├── terraform
-│ ├── main.tf
-│ ├── variables.tf
+│   ├── main.tf
+│   └── variables.tf
 │
 ├── app
-│ ├── frontend
-│ └── backend
+│   ├── frontend
+│   └── backend
 │
 ├── docs
-│ └── architecture.png
+│   └── architecture.png
 │
 └── README.md
+```
 
 ## Anggota Tim
 
