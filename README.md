@@ -53,7 +53,7 @@ Estimasi biaya bulanan menggunakan AWS Pricing Calculator adalah sebagai berikut
 
 | Layanan | Estimasi Biaya |
 |--------|---------------|
-| Amazon S3 | ± $1,03 USD |
+| Amazon S3 | ± $0,03 USD |
 | CloudFront | ± $2,40   |
 | API Gateway | ± $1,25 |
 | AWS Lambda | ± $0,41 |
