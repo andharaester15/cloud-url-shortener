@@ -41,19 +41,11 @@ Beberapa layanan cloud yang digunakan dalam sistem ini antara lain:
 - **Amazon DynamoDB**  
   Digunakan sebagai database NoSQL untuk menyimpan mapping antara URL pendek dan URL asli.
 
-- **Amazon CloudWatch**  
-  Digunakan untuk monitoring dan logging sistem agar aktivitas dan performa sistem dapat dipantau secara real-time.
-
-- **AWS IAM (Identity and Access Management)**  
-  Digunakan untuk mengatur hak akses dan keamanan antar layanan cloud.
-
 ## Arsitektur Sistem
 
 Sistem menggunakan arsitektur serverless dengan alur sebagai berikut:
 
 User → CloudFront → Amazon S3 (Frontend) → API Gateway → AWS Lambda → DynamoDB → Redirect ke URL asli
-
-Monitoring sistem dilakukan menggunakan CloudWatch dan pengaturan keamanan menggunakan IAM.
 
 ## Estimasi Biaya
 
@@ -64,15 +56,13 @@ Estimasi biaya bulanan menggunakan AWS Pricing Calculator adalah sebagai berikut
 | Amazon S3 | ± $1 |
 | CloudFront | ± $1 – $2 |
 | API Gateway | ± $1 – $2 |
-| AWS Lambda | Free Tier / ± $1 |
+| AWS Lambda | Free / ± $1 |
 | DynamoDB | ± $1 – $2 |
-| CloudWatch | Free / ± $1 |
-| IAM | Free |
 
 Total estimasi biaya: **± $5 – $10 per bulan**  
 (sekitar Rp80.000 – Rp160.000)
 
-Biaya ini dapat meningkat seiring dengan pertumbuhan jumlah pengguna dan trafik sistem, namun tetap dapat dikontrol karena menggunakan arsitektur serverless berbasis **pay-as-you-go**.
+Biaya ini dapat meningkat seiring dengan pertumbuhan jumlah pengguna dan trafik sistem, namun tetap dapat dikontrol karena menggunakan arsitektur serverless yang berbasis pemakaian (**pay-as-you-go**).
 
 ## Struktur Repository
 
