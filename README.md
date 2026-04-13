@@ -53,16 +53,14 @@ Estimasi biaya bulanan menggunakan AWS Pricing Calculator adalah sebagai berikut
 
 | Layanan | Estimasi Biaya |
 |--------|---------------|
-| Amazon S3 | ± $1 |
-| CloudFront | ± $1 – $2 |
-| API Gateway | ± $1 – $2 |
-| AWS Lambda | Free / ± $1 |
-| DynamoDB | ± $1 – $2 |
+| Amazon S3 | ± $1,03 USD |
+| CloudFront | ± $2,40   |
+| API Gateway | ± $1,25 |
+| AWS Lambda | ± $0,41 |
+| DynamoDB | ± $0,11 |
 
-Total estimasi biaya: **± $5 – $10 per bulan**  
-(sekitar Rp80.000 – Rp160.000)
-
-Biaya ini dapat meningkat seiring dengan pertumbuhan jumlah pengguna dan trafik sistem, namun tetap dapat dikontrol karena menggunakan arsitektur serverless yang berbasis pemakaian (**pay-as-you-go**).
+Total estimasi biaya: **± $4,20**  
+(sekitar Rp72.000)
 
 ## Struktur Repository
 
