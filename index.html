@@ -90,23 +90,6 @@
       font-weight:bold;
     }
 
-    .card{
-      background:#f7f7f7;
-      padding:15px;
-      border-radius:12px;
-      margin-top:15px;
-      border-left:5px solid #764ba2;
-      transition:0.3s;
-    }
-
-    .card:hover{
-      transform:translateY(-3px);
-    }
-
-    .card p{
-      margin:5px 0;
-    }
-
   </style>
 </head>
 
@@ -126,8 +109,6 @@
       <p><strong>Short URL:</strong></p>
       <a id="shortUrl" target="_blank"></a>
     </div>
-
-    <div id="history"></div>
 
   </div>
 
@@ -159,40 +140,7 @@
       shortUrlElement.href = data.shortUrl;
       shortUrlElement.textContent = data.shortUrl;
 
-      document.getElementById("urlInput").value = "";
-
-      loadHistory();
-
     }
-
-    async function loadHistory(){
-
-      const response = await fetch("/api/data");
-      const data = await response.json();
-
-      const history = document.getElementById("history");
-
-      history.innerHTML = "";
-
-      data.reverse().forEach(item => {
-
-        const shortLink = `http://13.229.59.129:3000/${item.id}`;
-
-        const card = document.createElement("div");
-        card.className = "card";
-
-        card.innerHTML = `
-          <p><strong>Original URL:</strong> ${item.nama}</p>
-          <p><strong>Short URL:</strong> <a href="${shortLink}" target="_blank">${shortLink}</a></p>
-        `;
-
-        history.appendChild(card);
-
-      });
-
-    }
-
-    loadHistory();
 
   </script>
 
