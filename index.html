@@ -6,16 +6,17 @@
   <title>Cloud URL Shortener</title>
 
   <style>
+
     *{
       margin:0;
       padding:0;
       box-sizing:border-box;
-      font-family: Arial, Helvetica, sans-serif;
+      font-family:Arial, Helvetica, sans-serif;
     }
 
     body{
       min-height:100vh;
-      background: linear-gradient(135deg, #667eea, #764ba2);
+      background:linear-gradient(135deg,#667eea,#764ba2);
       display:flex;
       justify-content:center;
       align-items:center;
@@ -33,14 +34,14 @@
 
     h1{
       text-align:center;
-      margin-bottom:10px;
       color:#333;
+      margin-bottom:10px;
     }
 
     .subtitle{
       text-align:center;
       color:gray;
-      margin-bottom:25px;
+      margin-bottom:30px;
     }
 
     .input-group{
@@ -64,8 +65,8 @@
       border-radius:12px;
       background:linear-gradient(135deg,#667eea,#764ba2);
       color:white;
-      font-size:16px;
       cursor:pointer;
+      font-size:16px;
       transition:0.3s;
     }
 
@@ -74,11 +75,26 @@
       opacity:0.9;
     }
 
+    .result{
+      margin-top:20px;
+      background:#f7f7f7;
+      padding:15px;
+      border-radius:12px;
+      word-wrap:break-word;
+      display:none;
+    }
+
+    .result a{
+      color:#764ba2;
+      text-decoration:none;
+      font-weight:bold;
+    }
+
     .card{
       background:#f7f7f7;
       padding:15px;
       border-radius:12px;
-      margin-bottom:10px;
+      margin-top:15px;
       border-left:5px solid #764ba2;
       transition:0.3s;
     }
@@ -89,7 +105,6 @@
 
     .card p{
       margin:5px 0;
-      color:#333;
     }
 
   </style>
@@ -100,67 +115,84 @@
   <div class="container">
 
     <h1>Cloud URL Shortener</h1>
-    <p class="subtitle">AWS DynamoDB Integration</p>
+    <p class="subtitle">AWS EC2 + DynamoDB Integration</p>
 
     <div class="input-group">
-      <input type="text" id="id" placeholder="Masukkan ID">
-      <input type="text" id="nama" placeholder="Masukkan URL">
-      <button onclick="tambahData()">Tambah Data</button>
+      <input type="text" id="urlInput" placeholder="Masukkan URL panjang...">
+      <button onclick="shortenUrl()">Shorten</button>
     </div>
 
-    <div id="data-list"></div>
+    <div class="result" id="resultBox">
+      <p><strong>Short URL:</strong></p>
+      <a id="shortUrl" target="_blank"></a>
+    </div>
+
+    <div id="history"></div>
 
   </div>
 
   <script>
 
-    async function tambahData() {
+    async function shortenUrl(){
 
-      const id = document.getElementById("id").value;
-      const nama = document.getElementById("nama").value;
+      const originalUrl = document.getElementById("urlInput").value;
 
-      await fetch("http://localhost:3000/add", {
+      if(!originalUrl){
+        alert("Masukkan URL terlebih dahulu!");
+        return;
+      }
+
+      const response = await fetch("/shorten", {
         method:"POST",
         headers:{
           "Content-Type":"application/json"
         },
-        body:JSON.stringify({ id, nama })
+        body:JSON.stringify({ originalUrl })
       });
 
-      alert("Data berhasil ditambahkan!");
-
-      document.getElementById("id").value = "";
-      document.getElementById("nama").value = "";
-
-      loadData();
-    }
-
-    async function loadData() {
-
-      const response = await fetch("http://localhost:3000/data");
       const data = await response.json();
 
-      const list = document.getElementById("data-list");
+      document.getElementById("resultBox").style.display = "block";
 
-      list.innerHTML = "";
+      const shortUrlElement = document.getElementById("shortUrl");
 
-      data.forEach(item => {
+      shortUrlElement.href = data.shortUrl;
+      shortUrlElement.textContent = data.shortUrl;
+
+      document.getElementById("urlInput").value = "";
+
+      loadHistory();
+
+    }
+
+    async function loadHistory(){
+
+      const response = await fetch("/api/data");
+      const data = await response.json();
+
+      const history = document.getElementById("history");
+
+      history.innerHTML = "";
+
+      data.reverse().forEach(item => {
+
+        const shortLink = `http://13.229.59.129:3000/${item.id}`;
 
         const card = document.createElement("div");
         card.className = "card";
 
         card.innerHTML = `
-          <p><strong>ID:</strong> ${item.id}</p>
-          <p><strong>URL:</strong> ${item.nama}</p>
+          <p><strong>Original URL:</strong> ${item.nama}</p>
+          <p><strong>Short URL:</strong> <a href="${shortLink}" target="_blank">${shortLink}</a></p>
         `;
 
-        list.appendChild(card);
+        history.appendChild(card);
 
       });
 
     }
 
-    loadData();
+    loadHistory();
 
   </script>
 

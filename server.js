@@ -2,11 +2,13 @@ const express = require("express");
 const AWS = require("aws-sdk");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const path = require("path");
 
 const app = express();
 
 app.use(cors());
 app.use(bodyParser.json());
+app.use(express.static(__dirname));
 
 AWS.config.update({
   region: "ap-southeast-1"
@@ -14,51 +16,111 @@ AWS.config.update({
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 
-// Nama tabel DynamoDB kalian
 const TABLE_NAME = "url-mapping";
 
-// Route test
+// Halaman utama
 app.get("/", (req, res) => {
-  res.send("API Running");
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// Tambah data ke DynamoDB
-app.post("/add", async (req, res) => {
-  const { id, nama } = req.body;
+// Membuat short URL
+app.post("/shorten", async (req, res) => {
+
+  const { originalUrl } = req.body;
+
+  if (!originalUrl) {
+    return res.status(400).json({
+      message: "URL wajib diisi"
+    });
+  }
+
+  // Generate short code random
+  const shortCode = Math.random().toString(36).substring(2, 8);
 
   const params = {
     TableName: TABLE_NAME,
     Item: {
-      id,
-      nama
+      id: shortCode,
+      nama: originalUrl
     }
   };
 
   try {
+
     await dynamodb.put(params).promise();
-    res.send("Data berhasil ditambahkan");
+
+    const shortUrl = `http://13.229.59.129:3000/${shortCode}`;
+
+    res.json({
+      shortUrl,
+      shortCode,
+      originalUrl
+    });
+
   } catch (err) {
+
     console.error(err);
-    res.status(500).send(err);
+
+    res.status(500).json({
+      message: "Gagal membuat short URL"
+    });
+
   }
+
+});
+
+// Redirect short URL ke URL asli
+app.get("/:code", async (req, res) => {
+
+  const code = req.params.code;
+
+  const params = {
+    TableName: TABLE_NAME,
+    Key: {
+      id: code
+    }
+  };
+
+  try {
+
+    const data = await dynamodb.get(params).promise();
+
+    if (!data.Item) {
+      return res.status(404).send("Short URL tidak ditemukan");
+    }
+
+    return res.redirect(data.Item.nama);
+
+  } catch (err) {
+
+    console.error(err);
+    res.status(500).send("Server Error");
+
+  }
+
 });
 
 // Ambil semua data
-app.get("/data", async (req, res) => {
+app.get("/api/data", async (req, res) => {
+
   const params = {
     TableName: TABLE_NAME
   };
 
   try {
+
     const data = await dynamodb.scan(params).promise();
     res.json(data.Items);
+
   } catch (err) {
+
     console.error(err);
     res.status(500).send(err);
+
   }
+
 });
 
-// Jalankan server
 app.listen(3000, () => {
   console.log("Server running on port 3000");
 });
