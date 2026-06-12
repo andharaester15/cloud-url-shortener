@@ -4,71 +4,85 @@ Project ini merupakan sistem pemendek URL berbasis cloud yang dikembangkan sebag
 
 ## Latar Belakang
 
-Dalam penggunaan internet sehari-hari, URL yang panjang sering kali sulit dibaca, dibagikan, dan kurang efisien terutama dalam konteks media sosial, presentasi, maupun komunikasi digital. Selain itu, URL yang panjang juga berpotensi menimbulkan kesalahan saat diketik ulang.
+URL yang panjang sering kali sulit dibaca, dibagikan, dan kurang efisien digunakan pada media sosial, dokumen, maupun komunikasi digital. Selain itu, URL yang panjang berpotensi menimbulkan kesalahan saat diketik ulang oleh pengguna.
 
-Untuk mengatasi permasalahan tersebut, diperlukan suatu sistem yang mampu mempersingkat URL tanpa mengubah tujuan aksesnya. Dengan memanfaatkan teknologi cloud computing, sistem ini dapat dibangun secara scalable, efisien, dan mudah diakses dari mana saja tanpa perlu mengelola infrastruktur fisik.
+Untuk mengatasi permasalahan tersebut, dikembangkan sistem URL Shortener yang mampu mengubah URL panjang menjadi URL pendek tanpa mengubah tujuan aksesnya. Sistem ini dibangun dengan memanfaatkan layanan cloud Amazon Web Services (AWS) sehingga lebih fleksibel, mudah dikelola, dan dapat diakses secara online.
 
 ## Tujuan Proyek
 
 Tujuan dari proyek ini adalah:
 
-- Membangun sistem pemendek URL berbasis cloud
-- Memudahkan pengguna dalam membagikan link secara ringkas dan efisien
-- Mengimplementasikan arsitektur serverless yang scalable dan cost-effective
-- Mengintegrasikan berbagai layanan cloud dalam satu sistem yang saling terhubung
-- Menyediakan sistem yang dapat diakses secara online dengan performa yang baik
+* Membangun sistem URL Shortener berbasis cloud.
+* Memudahkan pengguna dalam membagikan URL secara lebih ringkas.
+* Mengimplementasikan layanan cloud AWS pada aplikasi web.
+* Menerapkan monitoring dan alerting untuk memantau kondisi sistem.
+* Mempelajari penerapan Infrastructure as Code (IaC) menggunakan Terraform.
 
 ## Cloud Platform
 
-Proyek ini menggunakan layanan dari Amazon Web Services.
+Proyek ini menggunakan layanan dari Amazon Web Services (AWS).
 
 ## Layanan Cloud yang Digunakan
 
-Beberapa layanan cloud yang digunakan dalam sistem ini antara lain:
+### Amazon EC2
 
-- **Amazon S3**  
-  Digunakan untuk hosting frontend website karena bersifat statis, scalable, dan memiliki biaya yang rendah.
+Digunakan sebagai server utama untuk menjalankan aplikasi URL Shortener berbasis Node.js dan Express.js.
 
-- **Amazon CloudFront**  
-  Digunakan sebagai Content Delivery Network (CDN) untuk mempercepat distribusi konten kepada pengguna dengan latency rendah.
+### Amazon DynamoDB
 
-- **Amazon API Gateway**  
-  Digunakan untuk membuat dan mengelola API yang menghubungkan frontend dengan backend.
+Digunakan sebagai database NoSQL untuk menyimpan data URL asli dan short code yang dihasilkan sistem.
 
-- **AWS Lambda**  
-  Digunakan sebagai backend serverless untuk memproses pembuatan URL pendek dan melakukan redirect ke URL asli.
+### Amazon CloudWatch
 
-- **Amazon DynamoDB**  
-  Digunakan sebagai database NoSQL untuk menyimpan mapping antara URL pendek dan URL asli.
+Digunakan untuk memonitor performa server, seperti penggunaan CPU, memori, disk, dan aktivitas jaringan secara real-time.
+
+### Amazon SNS (Simple Notification Service)
+
+Digunakan untuk mengirim notifikasi email secara otomatis ketika alarm CloudWatch aktif.
+
+### AWS IAM
+
+Digunakan untuk mengatur hak akses dan keamanan layanan AWS yang digunakan pada proyek.
+
+### Security Group
+
+Digunakan untuk mengatur lalu lintas jaringan yang diperbolehkan menuju instance EC2.
+
+### Terraform
+
+Digunakan sebagai pendekatan Infrastructure as Code (IaC) untuk mengotomatisasi pembuatan resource jaringan seperti VPC, subnet, route table, dan Internet Gateway.
 
 ## Arsitektur Sistem
 
-Sistem menggunakan arsitektur serverless dengan alur sebagai berikut:
+Sistem menggunakan arsitektur cloud dengan alur sebagai berikut:
 
-User → CloudFront → Amazon S3 (Frontend) → API Gateway → AWS Lambda → DynamoDB → Redirect ke URL asli
+User → Browser → Amazon EC2 (Node.js & Express.js) → Amazon DynamoDB
 
-## Estimasi Biaya
+CloudWatch memonitor resource EC2 dan mengirim alarm melalui Amazon SNS ketika terjadi kondisi tertentu.
 
-Estimasi biaya bulanan menggunakan AWS Pricing Calculator adalah sebagai berikut:
+## Implementasi Infrastructure as Code
 
-| Layanan | Estimasi Biaya |
-|--------|---------------|
-| Amazon S3 | ± $0,03 USD |
-| CloudFront | ± $2,40 USD  |
-| API Gateway | ± $1,25 USD |
-| AWS Lambda | ± $0,41 USD |
-| DynamoDB | ± $0,11 USD |
+Selain konfigurasi manual melalui AWS Console, proyek ini juga menerapkan Infrastructure as Code menggunakan Terraform untuk provisioning infrastruktur jaringan AWS.
 
-Total estimasi biaya: **± $4,20**  
-(sekitar Rp72.000)
+Resource yang berhasil dibuat menggunakan Terraform meliputi:
+
+* Virtual Private Cloud (VPC)
+* Public Subnet
+* Private Subnet
+* Internet Gateway
+* Route Table
+* Route Table Association
+
+Implementasi ini membantu mengotomatisasi proses deployment infrastruktur sehingga lebih konsisten, terdokumentasi, dan mudah direplikasi.
 
 ## Struktur Repository
 
-```
+```text
 cloud-url-shortener
 │
 ├── terraform
 │   ├── main.tf
+│   ├── outputs.tf
 │   └── variables.tf
 │
 ├── app
@@ -81,18 +95,39 @@ cloud-url-shortener
 └── README.md
 ```
 
+## Tantangan yang Dihadapi
+
+Selama pengembangan proyek, tim menghadapi beberapa kendala, di antaranya:
+
+* Error saat menjalankan terraform init, terraform plan, dan terraform apply.
+* Konfigurasi kredensial AWS yang belum sesuai.
+* Kesalahan konfigurasi file Terraform yang menyebabkan deployment gagal.
+* Integrasi antar layanan AWS yang memerlukan proses debugging dan pengujian berulang.
+
+Kendala tersebut berhasil diatasi melalui evaluasi konfigurasi Terraform, perbaikan kredensial AWS, serta pengujian ulang hingga proses provisioning infrastruktur dapat berjalan dengan baik.
+
+## Lesson Learned
+
+Melalui proyek ini, tim memperoleh pemahaman mengenai:
+
+* Implementasi layanan cloud AWS pada aplikasi nyata.
+* Penggunaan Terraform sebagai Infrastructure as Code.
+* Deployment aplikasi berbasis cloud.
+* Monitoring dan alerting menggunakan CloudWatch dan SNS.
+* Pentingnya keamanan dan manajemen akses pada lingkungan cloud.
+
 ## Anggota Tim
 
-Kelompok 14
+**Kelompok 14**
 
-- Naisya Mustika (2330205030050)
-- Yiyin Febriani (2330205030064)
-- Andhara Ester Carlony (2330305030080)
-- Adella Ananda Putri (2330305030102)
+* Naisya Mustika (2330205030050)
+* Yiyin Febriani (2330205030064)
+* Andhara Ester Carlony (2330305030080)
+* Adella Ananda Putri (2330305030102)
 
 ## Institusi
 
-Jurusan Teknik Informatika  
-Fakultas Teknik  
-Universitas Palangka Raya  
+Jurusan Teknik Informatika
+Fakultas Teknik
+Universitas Palangka Raya
 2026
